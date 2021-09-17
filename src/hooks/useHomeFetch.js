@@ -20,9 +20,7 @@ export const useHomeFetch = () => {
         try {
             setError(false);
             setLoading(true);
-
             const movies = await API.fetchMovies(searchItem, page);
-
             setState(prev => ({
                 ...movies,
                 results:
@@ -37,19 +35,13 @@ export const useHomeFetch = () => {
 
     // Initial  
     useEffect(() => {
-        const sessionState = isPersistedState('homeState');
-        if(sessionState){
-            setState(sessionState);
-            return;
+        if(!searchTerm){
+            const sessionState = isPersistedState('homeState');
+            if(sessionState){
+                setState(sessionState);
+                return;
+            }
         }
-        console.log("Initial");
-        setState(initialState);
-        fetchMovies(1);
-    },[]);
-
-    // Search 
-    useEffect(() => {
-        console.log("Search");
         setState(initialState);
         fetchMovies(1,searchTerm);
     },[searchTerm]);
@@ -57,8 +49,8 @@ export const useHomeFetch = () => {
     // Load More
 
     useEffect(() => {
-        console.log("Load More");
         if(!isLoadingMore) return;
+        
         fetchMovies(state.page + 1, searchTerm);
         setIsLoadingMore(false);
         
@@ -67,5 +59,6 @@ export const useHomeFetch = () => {
     useEffect(() => {
         if(!searchTerm) sessionStorage.setItem('homeState', JSON.stringify(state))
     },[searchTerm, state]);
+    console.log(Date.now());
     return { state, loading, error, searchTerm, setSearchTerm, setIsLoadingMore};
 }
